@@ -4,6 +4,7 @@ passivated. The hope was that the passivated actors would be rehydrated when a n
 
 ## Setup
 To model the problem we need a publisher:
+
     ```scala
       class PublisherActor extends Actor with ActorLogging {
 
@@ -21,6 +22,7 @@ To model the problem we need a publisher:
     ```
 
 And a subscriber:
+
     ```scala
     class SubscribingActor extends PersistentActor with ActorLogging {
 
@@ -46,11 +48,13 @@ These would be fronted by a very simple REST interface.
 
 ## Execution
 Testing was quite simple. Using a curl request, create a Subscriber.
+
     ```bash
       curl -X POST -H "Content-Type: application/json" -d @subscription.json 127.0.0.1:8080/subscriber
     ```
 
 Before the subscriber is passivated, publish an event and make sure that the subscriber received the event.
+
     ```bash
       curl -X POST -H "Content-Type: application/json" -d @updateableEvent.json 127.0.0.1:8080/publisher
     ```
@@ -63,6 +67,7 @@ event.
 Unfortunately as can be seen from the logs below, the mediator seems to only hold a reference to the current actor path
 and therefore, the event which is published after the actor is passivated does not wake the sleeping subscriber from its
 slumber... :disappointed:
+
     ```bash
       15:06:23.259 c.m.a.SubscribingActor - Subscriber-1234567 actor instance created
       15:06:23.262 c.m.a.SubscribingActor - Subscriber-1234567 is subscribing to 7654321
