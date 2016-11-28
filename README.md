@@ -6,6 +6,7 @@ rehydrated when a new publish event occured.
 ## Setup
 To model the problem we need a publisher:
 
+```scala
       class PublisherActor extends Actor with ActorLogging {
 
         log.info(s"Publisher ${self.path.name} actor instance created")
@@ -19,9 +20,11 @@ To model the problem we need a publisher:
           }
         }
       }
+```
 
 And a subscriber:
 
+```scala
     class SubscribingActor extends PersistentActor with ActorLogging {
 
       var state: SubscriberState = SubscriberState(subscribedPublisher = None)
@@ -40,6 +43,7 @@ And a subscriber:
         case ReceiveTimeout => context.stop(self)
       }
     }
+```
 
 These would be fronted by a very simple REST interface.
 
@@ -48,11 +52,15 @@ These would be fronted by a very simple REST interface.
 Testing was quite simple. Using a curl request, create a Subscriber.
 
 
-      curl -X POST -H "Content-Type: application/json" -d @subscription.json 127.0.0.1:8080/subscriber
+```
+    curl -X POST -H "Content-Type: application/json" -d @subscription.json 127.0.0.1:8080/subscriber
+```
 
 Before the subscriber is passivated, publish an event and make sure that the subscriber received the event.
 
-      curl -X POST -H "Content-Type: application/json" -d @updateableEvent.json 127.0.0.1:8080/publisher
+```
+    curl -X POST -H "Content-Type: application/json" -d @updateableEvent.json 127.0.0.1:8080/publisher
+```
 
 And then after the subscriber was passivated, resubmit the event and see if the subscriber was awoken to process the
 event.
